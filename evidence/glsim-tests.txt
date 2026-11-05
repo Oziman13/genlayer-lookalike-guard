@@ -1,0 +1,9 @@
+Lookalike Guard v0.1.0 -- local network tests (glsim, 5 validators, model mocked), run on 2026-11-05 (UTC)
+python3 -m pytest tests/glsim -v
+
+tests/glsim/test_lookalike_guard_network.py::test_the_three_outcomes_through_five_validators PASSED [ 20%]
+tests/glsim/test_lookalike_guard_network.py::test_cyrillic_and_turkish_names_travel_through_the_network PASSED [ 40%]
+tests/glsim/test_lookalike_guard_network.py::test_a_badly_formed_model_answer_changes_nothing PASSED [ 60%]
+tests/glsim/test_lookalike_guard_network.py::test_shared_characters_that_are_not_in_the_names_are_not_a_verdict PASSED [ 80%]
+tests/glsim/test_lookalike_guard_network.py::test_challenge_release_and_limits PASSED [100%]
+============================== 5 passed in 6.95s ===============================

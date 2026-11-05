@@ -1,0 +1,45 @@
+Lookalike Guard v0.1.0 -- mutation check, run on 2026-11-05 (UTC)
+python3 scripts/mutation_check.py
+
+base: tests pass on the unmodified contract
+SURVIVED: model answer cap
+SURVIVED: multiplication sign allowed
+SURVIVED: older may equal newer
+SURVIVED: upheld pair not recorded
+SURVIVED: parser: target unbounded above
+SURVIVED: parser: shared type unchecked
+SURVIVED: validator: state unchecked
+SURVIVED: validator: negative target
+SURVIVED: validator: result type unchecked
+SURVIVED: validator: size cap removed
+mutants: 126, killed: 116, survived: 10
+ - model answer cap
+ - multiplication sign allowed
+ - older may equal newer
+ - upheld pair not recorded
+ - parser: target unbounded above
+ - parser: shared type unchecked
+ - validator: state unchecked
+ - validator: negative target
+ - validator: result type unchecked
+ - validator: size cap removed
+
+The ten survivors are changes that cannot alter any result in this contract, not missing tests:
+ - model answer cap (MAX_MODEL 2000 -> 2001): exec_prompt(response_format="json") hands the contract an already parsed object, so the
+   string-length guard is only reachable with a raw string answer, which the test harness cannot produce.
+ - multiplication sign allowed: the multiplication sign is not a letter, so _script returns "" for it before the exclusion list is reached.
+ - older may equal newer (challenge): an older and a newer name with the same id are the same record, which has the same owner, so the
+   "own owner" check has already refused it.
+ - upheld pair not recorded: a challenge needs both names to be active; the newer name is revoked by an upheld challenge and ids are never
+   reused, so the same pair can never be reached again.
+ - parser: target unbounded above: a target past the last candidate raises IndexError inside the reading, which is caught and becomes an
+   unreadable answer, the same outcome as the explicit range check.
+ - parser: shared type unchecked: a shared value that is not a string raises inside the reading, which is caught and becomes an unreadable
+   answer, the same outcome as the explicit type check.
+ - validator: state unchecked: a reading whose state is neither OK nor ERROR is still rejected a few lines later, when its state is
+   compared with the validator's own (always OK or ERROR).
+ - validator: negative target: a negative target that passes the anchor check is rejected when it is compared with the validator's own
+   target (never negative).
+ - validator: result type unchecked: the test harness always hands the validator a successful result; a non-result value is not
+   something the harness can produce.
+ - validator: size cap removed (2000): a valid canonical reading is far shorter than 2000 characters.
